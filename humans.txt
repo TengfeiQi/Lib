@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Tengfei -- Author -- <twitter.com/tengfeiqi> <weibo.com/tengfeijs>
+
+# THANKS
+
+    Mingyi.me
+
+# TECHNOLOGY COLOPHON
+
+    CSS3, HTML5
+    Github Pages

@@ -1,0 +1,214 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>StackUI Lib</title>
+        <meta name="description" content="StackUI Lib">
+        <meta name="description" content="StackUI Lib" />
+        <meta name="keywords" content="StackUI, UX, loading, flat, css, simple, css3, github, html5" />
+        <meta property="og:title" content="StackUI Lib" />
+        <meta property="og:description" content="StackUI Lib" />
+        <meta property="og:url" content="http://blog.stackui.com/Lib/" />
+        <!-- <meta property="og:image" content="/images/ta.png" /> -->
+        <meta property="og:site_name" content="StackUI Lib" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <style type="text/css">
+            html, body { margin: 0; padding: 0;}
+            a {
+                text-decoration: none;
+            }
+            body {
+                font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+                font-size: 14px;
+                line-height: 1.42857143;
+                color: #333;
+                width: 100%;
+                position: relative;
+                height: 100%;
+                overflow: hidden;
+            }
+            div,p,h1,h2,h3,h4,h5,h6,ul,dl,ol,li {
+                margin: 0;
+                padding: 0;
+            }
+            .header {
+                background: #1582dc;
+                position: fixed;
+                width: 100%;
+                height:40px;
+            }
+            .header .site-title {
+                font-size: 16px;
+                padding-left: 15px;
+                line-height: 40px;
+                color: #f0f0f0;
+            }
+            .header .site-title a {
+                text-decoration: none;
+                color: #f0f0f0;
+            }
+            .header .github-x {
+                position: absolute;
+                right: 0;
+                top: 0;
+                font: 14px/40px 'Tahoma';
+                color: #ddd;
+            }
+            .header .github-x a {
+                color: #1A48FF;
+            }
+            .container {
+                width: 100%;
+                float: right;
+                margin-left: -200px;
+            }
+            .content {
+                background: #fff;
+                margin-left: 200px;
+            }
+            .sidebar {
+                background: #4f5061;
+                height: 100%;
+                position: fixed;
+                margin-top: 40px;
+                width: 200px;
+                color: #e2e4f6;
+                float: left;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            .sidebar ul li {
+                padding: 10px 15px;
+                text-decoration: none;
+                border-bottom: 1px solid #545567;
+                -webkit-transition: 0.25s;
+                transition: 0.25s;
+            }
+            .sidebar ul li a {
+                text-decoration: none;
+                display: block;
+                color: #e2e4f6;
+            }
+            .sidebar::-webkit-scrollbar-track-piece {
+                background-color: transparent;
+            }
+            .sidebar::-webkit-scrollbar-thumb {
+              background-color: #999;
+              -webkit-border-radius: 3px;
+            }
+            .sidebar::-webkit-scrollbar {
+              width: 4px;
+              height: 4px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+   
+        <div id="header" class="header">
+            <h2 class="site-title"><a href="./">StackUI Lib</a></h2>
+            <p class="github-x">啥？想到Github来X我，那就<a href="https://github.com/TengfeiQi/Lib" target="_blank">来吧</a>！</p>
+        </div>
+
+        <div id="container" class="container">
+            <div id="content" class="content">
+                <iframe id="placeholder-iframe" name="placeholder-iframe" src="./description.html" style="padding-top: 40px;" width="100%" frameborder="0" scrolling="yes"></iframe>
+            </div>
+        </div>
+
+        <div id="sidebar" class="sidebar">
+            <ul id="sidebar-nav"></ul>
+        </div>
+
+        <script>
+        var Lib = {
+            $: function(id) {
+                return document.getElementById(id);
+            },
+
+            initIframe: function() {
+                var that = this;
+                var placeholderIframe = that.$("placeholder-iframe");
+                placeholderIframe.setAttribute("height", window.screen.height - 138);
+                var paramsSrc = that.getUrlParams("src")
+                if(!!paramsSrc){
+                    var placeholderIframe = that.$("placeholder-iframe");
+                    placeholderIframe.setAttribute("src", "http://" + paramsSrc);
+                }
+            },
+
+            getUrlParams: function(name) {
+                var r = new RegExp("(\\?|#|&)"+name+"=([^&#]*)(&|#|$)");
+                var m = location.href.match(r);
+                return decodeURIComponent(!m?"":m[2]);
+            },
+
+            bindEvent: function() {
+                var that = this;
+                var sidebarNav = that.$("sidebar-nav");
+                var placeholderIframe = that.$("placeholder-iframe");
+                sidebarNav.addEventListener("click", function(evt) {
+                    if(evt.target.tagName.toLowerCase() !== "a") {
+                        return
+                    }
+
+                    placeholderIframe.setAttribute("src", evt.target.getAttribute("href"));
+
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    return
+                }, false) 
+            },
+
+            genTpl: function(data){
+                var tpl = [];
+                data.forEach(function(v, k){
+                    tpl.push("<li><a href='"+ v.link + "' >"+ v.title +"</a></li>")
+                });
+
+                return tpl.join("");
+            },
+
+            updateSideBar: function() {
+                var that = this;
+                var sidebarNav  = that.$("sidebar-nav");
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "./data.json", true);
+                xhr.send();
+                xhr.onreadystatechange = function(res){
+                    if(xhr.readyState == 4) {
+                        if(xhr.status == 200) {
+                            var data = JSON.parse(xhr.responseText);
+                            sidebarNav.innerHTML = that.genTpl(data.libs);
+                        }
+                    }
+                }
+            },
+
+            init: function() {
+                this.initIframe();
+                this.updateSideBar();
+                this.bindEvent();
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            Lib.init();
+            console.log("DOM fully loaded and parsed");
+        });
+
+        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='https://www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-61762093-1','auto');
+            ga('send','pageview');
+        </script>
+    </body>
+</html>
